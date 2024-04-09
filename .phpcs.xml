@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="M+G Standard">
+    <description>Mari + Gold WP Standard</description>
+
+    <!-- Use PSR-12 coding standard -->
+    <rule ref="PSR12"/>
+
+    <!-- Rule customizations -->
+    <rule ref="Generic.PHP.DisallowShortOpenTag.PossibleFound">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Generic.WhiteSpace.ScopeIndent.Incorrect">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <severity>0</severity>
+    </rule>
+
+</ruleset>

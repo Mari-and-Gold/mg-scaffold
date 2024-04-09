@@ -1,0 +1,81 @@
+name: Staging Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      verify-env:
+        description: "If you really want to push to staging, write 'staging'."
+        required: true
+
+jobs:
+  environment_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display Failure Message
+        if: |
+          github.event.inputs.verify-env != 'staging' ||
+          github.ref != 'refs/heads/staging'
+        run: |
+          echo "This workflow is not applicable for this branch."
+          echo "Input parameter is ${{ github.event.inputs.verify-env }}"
+          echo "Branch name is ${{ github.ref }}"
+
+  linter:
+    name: PHP Linter
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3' # Specify the PHP version you are using
+
+      - name: Install dependencies
+        run: | 
+          cd wp-content/themes/discover-coronado
+          composer install --no-interaction --prefer-dist
+
+      - name: Run PHP linting
+        run: |
+          cd wp-content/themes/discover-coronado
+          composer lint
+
+      - name: Check for linting errors
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "Linting errors found. Exiting..."
+            exit 1
+          fi
+
+  staging_deploy:
+    if: |
+      github.event.inputs.verify-env == 'staging' &&
+      github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 git.wpengine.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          echo "Host git.wpengine.com" >> ~/.ssh/config
+          echo "  User git" >> ~/.ssh/config
+          echo "  Hostname git.wpengine.com" >> ~/.ssh/config
+          echo "  PreferredAuthentications publickey" >> ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/id_ed25519" >> ~/.ssh/config
+          echo "  IdentitiesOnly yes" >> ~/.ssh/config
+
+      - name: Push to Another Repo
+        run: |
+          git remote add wpengine/staging "${{ vars.WPE_STAGING }}"
+          git push -v -o remove-empty-dirs wpengine/staging staging

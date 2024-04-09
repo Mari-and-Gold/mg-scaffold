@@ -1,0 +1,36 @@
+name: PHP Linting
+
+on:
+  workflow_dispatch:
+      # Add other branches as needed
+
+jobs:
+  lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4' # Specify the PHP version you are using
+
+      - name: Install dependencies
+        run: | 
+          cd wp-content/themes/discover-coronado
+          composer install --no-interaction --prefer-dist
+
+      - name: Run PHP linting
+        run: |
+          cd wp-content/themes/discover-coronado
+          composer lint
+          
+      - name: Check for linting errors
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "Linting errors found. Exiting..."
+            exit 1
+          fi

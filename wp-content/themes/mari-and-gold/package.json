@@ -1,0 +1,22 @@
+{
+  "name": "mari-and-gold",
+  "version": "1.0.0",
+  "description": "Mari + Gold boilerplate",
+  "main": "index.js",
+  "scripts": {
+    "start": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "production": "mix --production"
+  },
+  "author": "mari+gold",
+  "license": "ISC",
+  "volta": {
+    "node": "20.12.1",
+    "npm": "10.5.1"
+  },
+  "devDependencies": {
+    "laravel-mix": "^6.0.49"
+  }
+}

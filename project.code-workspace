@@ -1,0 +1,10 @@
+{
+  "folders": [
+    {
+      "path": "./wp-content/themes/mari-and-gold"
+    }
+  ],
+  "settings": {
+    "intelephense.environment.includePaths": ["{workspaceFolder}/../../../"]
+  }
+}

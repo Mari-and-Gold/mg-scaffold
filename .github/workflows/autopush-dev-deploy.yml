@@ -1,0 +1,36 @@
+name: Autodeploy to Dev
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    if: |
+      github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 git.wpengine.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          echo "Host git.wpengine.com" >> ~/.ssh/config
+          echo "  User git" >> ~/.ssh/config
+          echo "  Hostname git.wpengine.com" >> ~/.ssh/config
+          echo "  PreferredAuthentications publickey" >> ~/.ssh/config
+          echo "  IdentityFile ~/.ssh/id_ed25519" >> ~/.ssh/config
+          echo "  IdentitiesOnly yes" >> ~/.ssh/config
+
+      - name: Push to staging
+        run: |
+          git remote add wpengine/dev "${{ vars.WPE_DEV }}"
+          git push -v -o remove-empty-dirs wpengine/dev dev
