@@ -10,11 +10,11 @@
     "friendsofphp/php-cs-fixer": "^3.49"
   },
   "scripts": {
-    "lint-file": "./vendor/bin/phpcs --standard=PSR12",
-    "lint": "./vendor/bin/phpcs -s --standard=.phpcs.xml *.php sidebar-templates/ blocks/ loop-templates/ partials/ inc/",
-    "report": "./vendor/bin/phpcs -s --report=source --standard=.phpcs.xml *.php sidebar-templates/ blocks/ loop-templates/ partials/ inc/",
-    "summary": "./vendor/bin/phpcs -s --report=summary --standard=.phpcs.xml *.php sidebar-templates/ blocks/ loop-templates/ partials/ inc/",
-    "fix": "./vendor/bin/phpcbf --standard=.phpcs.xml *.php sidebar-templates/ blocks/ loop-templates/ partials/ inc/"
+    "lint-file": "./vendor/bin/phpcs --standard=.phpcs.xml",
+    "lint": "./vendor/bin/phpcs -s --standard=.phpcs.xml --extensions=php --ignore=vendor .",
+    "report": "./vendor/bin/phpcs -s --report=source --standard=.phpcs.xml --extensions=php --ignore=vendor .",
+    "summary": "./vendor/bin/phpcs -s --report=summary --standard=.phpcs.xml --extensions=php --ignore=vendor .",
+    "fix": "./vendor/bin/phpcbf --standard=.phpcs.xml --extensions=php --ignore=vendor ."
   },
   "config": {
     "allow-plugins": {
